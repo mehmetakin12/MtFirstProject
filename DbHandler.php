@@ -11,13 +11,17 @@
  *
  * @author makin
  */
-$woord = "lepel";
-$db = new DbHandler();
-$db->findWoord($woord);
-
+//$woord = "lepel";
+//$db = new DbHandler();
+//$db->findWoord($woord);
+include_once '_config.php';
 class DbHandler {
+    private $woord;
+    private $gevonden;
+    
     //put your code here
     public function findWoord($woord){
+        $this->woord = $woord;
         //instellen van PDO
         $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -30,23 +34,21 @@ class DbHandler {
         $adres = '127.0.0.1';
         $charset = 'utf8mb4';
         $db = 'palindroom';
-        $user = "root";
-        $password = "";
         
         $host = "mysql:host=$adres;dbname=$db;charset=$charset";
         
 // stap 3:
         $sql = "SELECT * FROM palindromen WHERE woord='".$woord."';";
         try {
-            $conn = new PDO($host, $user, $password, $options);
+            $conn = new PDO($host, user, password, $options);
             $stmt = $conn->query($sql);
             
 // stap 4: ophalen van gegevens over de uitgevoerde query
             if ($stmt->rowCount() == 1){
-                echo "Woord gevonden";
+                $this->gevonden = TRUE;
             }
             else {
-                echo "Woord niet gevonden";
+                $this->gevonden = FALSE;
             }
             
         } catch (Exception $e) {
@@ -54,6 +56,11 @@ class DbHandler {
         }
         
         
+        
+    }
+    
+    public function isWoordGevonden(){
+        return $this->gevonden;
         
     }
 }
